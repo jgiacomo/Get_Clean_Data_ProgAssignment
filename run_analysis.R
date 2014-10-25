@@ -67,3 +67,19 @@ activityData <- tbl_df(activityData)
 
 # remove testData and trainData
 rm("testData", "trainData")
+
+# A check for duplicate column names indicates there are so we need to address
+# this by inspecting the duplicate names.
+names(activityData)[duplicated(names(activityData))]
+
+# none of these columns uncludes mean or standard deviation data which is asked
+# for in part 2. So, we can safely remove these columns without any ill effect.
+activityData <- activityData[,-duplicated(names(activityData))]
+ncol(activityData)  # = 479
+
+# now we can reduce the columns of our dataset down to just the ones which
+# contain means and standard deviations. This will be accomplished by using a
+# regular expresion with dplyr's select:matches method.
+mean_std_data <- select(activityData, matches("(mean|std)"))
+
+# this completes step 2 in the cleaning assignment.
