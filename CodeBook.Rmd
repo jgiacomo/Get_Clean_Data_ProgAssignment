@@ -1,0 +1,39 @@
+---
+title: "Description of HAR Dataset Cleaning and Tidying"
+author: "Jason Giacomo"
+date: "October 26, 2014"
+output: html_document
+---
+
+#####Data Source:
+The data set which forms the source for this cleaning and tidying excercise can be found at <https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip>.
+
+Citation:  
+Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
+
+#####Conventions used:
+For the data tables in this analysis I have used camelCase for the naming convention. I have also used this convention in variables which were defined by me (i.e. subjectID). Data tables were modeled as dplyr table objects for use of the dplyr package in the processing steps. The smartphone sensor data from the source dataset was not named following this convention. I made the decision to modify the names from those listed in the source data features.txt file by removing the characters which were not compatible with R data frame column names and replace them with underscores. This allows me to use the values with R without changing the values too far from their original naming convention from the original dataset as they have more meaning in that context.
+
+#####Dataset description:
+
+The dataset is a collection of smartphone motion sensor data which has been combined and calculated into the variables which are described in the source data's README.txt and features\_info.txt files. The variables were compiled for 30 subjects which all participated in 6 activities during data collection. Activities are described in the source data activity\_labels.txt file and the subject IDs are from the subject\_test.txt and subject\_train.txt files. The data was separated into test and train sections for use in creating and testing a machine learning algorithm. This is not of much use in this analysis so the train and test datasets were recombined into a single dataset.
+
+######Table description:
+Table Name: averageByActivityAndSubject
+
+180 observations of 88 variables
+
+* Field Label: activity
+* Variable: activities
+* Variable Type: character
+* Allowable Values: "LAYING", "SITTING", "STANDING", "WALKING", "WALKING\_DOWNSTAIRS", "WALKING\_UPSTAIRS"
+* Comments: None
+
+* Field Label: subjectID
+* Variable: ID numbers
+* Variable Type: integer
+* Allowable Values: 1 to 30
+* Comments: None
+
+All other fields (86) are modified from the fields described in the source data features.txt file. As described above, invalid characters were replaced with underscores. The file featureToNewColumnNamesMapping.txt maps the field names in the averageByActivityAndSubject table to the original source field names and field IDs.
+

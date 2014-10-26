@@ -1,0 +1,51 @@
+---
+title: "Getting and Cleaning Data: Programming Assignment"
+author: "Jason Giacomo"
+date: "October 26, 2014"
+output: html_document
+---
+
+This repository contains files and scripts related to the programming assignment for the Coursera class, Getting and Cleaning Data, part of the Data Science Specialization.
+
+###Purpose:
+The purpose of this project is to obtain data from the Human Activity Recognition Using Smartphones dataset, clean and tidy the data in a documented and reproducible way.
+
+###Source Dataset:
+This project works on the Human Activity Recognition Using Smartphones dataset. The dataset was downloaded from <https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip>. The dataset obtained sensor data (acceleration and gyroscopic) from a smartphone attached to each of 30 subjects which then performed 6 different activities while the data was recorded. The object of the dataset is to use the results for a machine learning algorithm, as such, the data was separated into a training set and a testing set. A full description of the dataset is included in the zip file.
+
+###Discussion of Project
+This project will take the modified sensor data (see source dataset documentation for details on how it was modified) from both the test and train sections, combine it with data about the activities performed and subject IDs, tidy the data, and find the mean of each data field grouped by activity and subject ID.
+
+There is a single script which runs in R to clean and tidy the dataset, `run_analysis.r`. The script must be in the same working directory as the main directory of the source dataset, "UCI HAR Dataset". The script works by first loading the `dplyr` package which contains useful functions for operating on the dataset. Each file is read into a data frame and converted into a dplyr table. The script then reads in the activity\_labels.txt and features.txt files which contain descriptive strings for each of the activities and data fields used in the final output. The data in y\_test.txt, X\_test.txt, and subject\_test.txt is then read into tables. X\_test.txt contains the modified smartphone data and the descriptors for these fields are contained in the features.txt file. These are combined so that the feautres in features.txt become the column names for the fields in X\_test.txt. Before this is done however, the fields in features.txt are modified to remove characters which are invalid in the column names of a data frame and replace them with the underscore character. Also, some repeated characters are removed for enhanced readability. The activity IDs in y\_test.txt are then replaced with the activity labels from activity\_labels.txt and this is combined with the subject IDs and the data in X\_test.txt to create a single table with rows for each observation which include the activity, subject ID, and sensor data.
+
+The above process is then repeated on the training dataset. Once completed the test and training datasets are combined into a single table. This table is further modified to select only the column data which refers to means and standard deviations of the modified sensor data. This is accomplished by using regular expressions to select all columns with 'mean' or 'std' in the column name. This table is then summarized into a new table which calculates the mean of each observation grouped by activity and subject.
+
+###Output of Script
+The script outputs two tables as text files: the table of all the mean and standard deviation observations linked with the activity and subject, activityDataMeansAndStds.txt, and the summarized table, averageByActivityAndSubject.txt. These two tables will also be in your R environment.
+
+###Description of Created Data Tables
+Details can be found in the CodeBook.Rmd file. Only the activityDataMeansAndStds and averageByActivityAndSubject tables are retained by the script.
+
+#####From Source Data
+
+* features: table created from features.txt
+    + Includes labels for the modified sensor data fields.
+* actLabels: table created from activity_labels.txt
+    + Includes mapping from activity IDs to activity labels.
+* xTest and xTrain: tables created from X\_test.txt and X\_train.txt respectively
+    + Contains all modified sensor data observations.
+* yTest and yTrain: tables created from y\_test.txt and y\_train.txt respectively
+    + Contain activity IDs for each row of sensor obervations in xTest and xTrain.
+    + Modified to replace the activity IDs with the activity labels using the mapping in actLabels.
+* subjectTest and subjectTrain: tables created from subject\_test.txt and subject\_train.txt files respectively
+    + Contain subject IDs for each row of sensor obervations in xTest and xTrain.
+
+#####Created During Data Processing
+
+* testData: created by combining yTest, subjectTest, and xTest tables
+* trainData: created by combining yTrain, subjectTrain, and xTrain tables
+* activityData: created by combining testData and trainData tables
+* activityDataMeansAndStds: created from activityData by selecting only fields with mean or standard deviation observations
+    + Selects only the activity, subjectID, and observations which are means or standard devations fields.
+* averageByActivityAndSubject: created by summarizing activityDataMeansAndStds
+    + Contains the mean of each observation grouped by activity and subject.
