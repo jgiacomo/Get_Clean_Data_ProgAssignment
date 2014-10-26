@@ -20,6 +20,14 @@ yTest <- tbl_df(yTest)
 xTest <- tbl_df(xTest)
 subjectTest <- tbl_df(subjectTest)
 
+# we are going to make the feature names the column names for xTest. Before
+# we do that let's clean up the names by removing characters which are
+# invalid for column names and any duplicated text (i.e. "BodyBody")
+features$feature <- gsub("\\(|\\)|-|,", "_", features$feature)
+features$feature <- gsub("__|___", "_", features$feature)
+features$feature <- gsub("_$", "", features$feature)
+features$feature <- gsub("BodyBody", "Body", features$feature)
+
 # give each new data frame logical column names
 # using data.tables instead of data.frames might be better so I can use key
 # replacement later when translating IDs into actual activities.
@@ -74,12 +82,17 @@ names(activityData)[duplicated(names(activityData))]
 
 # none of these columns uncludes mean or standard deviation data which is asked
 # for in part 2. So, we can safely remove these columns without any ill effect.
-activityData <- activityData[,-duplicated(names(activityData))]
-ncol(activityData)  # = 479
+activityData <- activityData[,-which(duplicated(names(activityData)))]
+ncol(activityData)  # = 477
 
 # now we can reduce the columns of our dataset down to just the ones which
 # contain means and standard deviations. This will be accomplished by using a
 # regular expresion with dplyr's select:matches method.
-mean_std_data <- select(activityData, matches("(mean|std)"))
+mean_std_data <- select(activityData, matches("subjectID|activity|mean|std"))
 
-# this completes step 2 in the cleaning assignment.
+# Now it's time to summarize our data. This will create a new data table which
+# calculates the mean for each activity and subject.
+
+averageByActivityAndSubject <- mean_std_data %>%
+    group_by(activity, subjectID) %>%
+    summarise_each(funs(mean))
